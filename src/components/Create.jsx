@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { auth } from "../firebase-config"; // file not included in git repo
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 export default function Create() {
   const [email, setEmail] = useState("");
@@ -6,6 +8,11 @@ export default function Create() {
 
   const CreateAccount = (e) => {
     e.preventDefault();
+    createUserWithEmailAndPassword(auth, email, password).then(
+      (userCredentials) => {
+        console.log(userCredentials);
+      }
+    );
   };
 
   return (
