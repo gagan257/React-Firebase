@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { auth } from "../firebase-config"; // file not included in git repo
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -18,6 +18,28 @@ export default function Login() {
         console.error(error);
       });
   };
+
+  const logOut = () => {
+    signOut(auth)
+      .then(() => {
+        setUser(null);
+        console.log("User Logged Out");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
     <div>
@@ -39,7 +61,14 @@ export default function Login() {
         />
         <button type="submit">Login</button>
       </form>
-      {user ? <h1>Welcome {user.email}</h1> : null}
+      {user ? (
+        <div>
+          {" "}
+          <p>Welcome {user.email}</p> <button onClick={logOut}>Log Out</button>{" "}
+        </div>
+      ) : (
+        <p>You are not Logged In</p>
+      )}
     </div>
   );
 }
