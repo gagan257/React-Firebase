@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { auth } from "../firebase-config"; // file not included in git repo
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
-export default function Create() {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setpassword] = useState("");
+  const [user, setUser] = useState(null);
 
-  const CreateAccount = (e) => {
+  const LoginAccount = (e) => {
     e.preventDefault();
-    createUserWithEmailAndPassword(auth, email, password)
+    signInWithEmailAndPassword(auth, email, password)
       .then((userCredentials) => {
-        console.log(userCredentials);
+        const LoggedInUser = userCredentials.user;
+        setUser(LoggedInUser);
       })
       .catch((error) => {
         console.error(error);
@@ -19,8 +21,8 @@ export default function Create() {
 
   return (
     <div>
-      <form onSubmit={CreateAccount}>
-        <h1>Create a New Account</h1>
+      <form onSubmit={LoginAccount}>
+        <h1>Login to your Account</h1>
         <input
           type="email"
           placeholder="Enter your Email"
@@ -35,8 +37,9 @@ export default function Create() {
           onChange={(e) => setpassword(e.target.value)}
           required
         />
-        <button type="submit">Create</button>
+        <button type="submit">Login</button>
       </form>
+      {user ? <h1>Welcome {user.email}</h1> : null}
     </div>
   );
 }
